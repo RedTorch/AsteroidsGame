@@ -21,3 +21,17 @@ Suggested steps to complete this assignment
 12. If you have extra time and are looking for a challenge, you might try to add an animation of "rockets" that appear from the back of the ship when you accelerate
 
 These steps are only a suggestion. Your Asteroids game doesn't have to work or act like any other. Have fun and be creative.
+
+=========================================================
+=FLIGHT INSTRUCTIONS FOR DE-ISHIKAWA LIGHT SPACE FRIGATE=
+=========================================================
+
+<ACCELERATION>
+press UP arrow key to accelerate
+
+<NAVIGATION>
+press LEFT and RIGHT arrow keys to rotate
+
+<HYPERSPACE>
+press 'h' to initiate hyperspace
+you must have jump fuel to initiate a hyperspace jump
