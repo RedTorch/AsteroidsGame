@@ -45,7 +45,6 @@ public void draw()
   fill(0);
   rect(0,height,width,50);
   stroke(50,100,200);
-  line(0,height,width,height);
   fill(50,100,200);
   textSize(15);
   textAlign(CENTER);
@@ -53,6 +52,9 @@ public void draw()
   text("Y-COORD <" + (int)(ishikari.getY()) + '>',(int)(width/8*3),height+25);
   text("SPEED <" + (int)(dist(0,0,(int)(ishikari.getDirectionX()*10),(int)(ishikari.getDirectionY()*10))) + '>',(int)(width/8*5),height+25);
   text("JUMP FUEL <" + jumpFuel + '>',(int)(width/8*7),height+25);
+  stroke(50,100,200);
+  noFill();
+  rect(0,0,width-1,height+49);
 }
 class SpaceShip extends Floater  
 {
