@@ -54,6 +54,7 @@ public void draw()
   text("JUMP FUEL <" + jumpFuel + '>',(int)(width/8*7),height+25);
   stroke(50,100,200);
   noFill();
+  line(0,height,width,height);
   rect(0,0,width-1,height+49);
 }
 class SpaceShip extends Floater  
