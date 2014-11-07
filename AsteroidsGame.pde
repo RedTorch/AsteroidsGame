@@ -48,10 +48,10 @@ public void draw()
   fill(50,100,200);
   textSize(15);
   textAlign(CENTER);
-  text("X-COORD <" + (int)(ishikari.getX()) + '>',(int)(width/8),height+25);
-  text("Y-COORD <" + (int)(ishikari.getY()) + '>',(int)(width/8*3),height+25);
-  text("SPEED <" + (int)(dist(0,0,(int)(ishikari.getDirectionX()*10),(int)(ishikari.getDirectionY()*10))) + '>',(int)(width/8*5),height+25);
-  text("JUMP FUEL <" + jumpFuel + '>',(int)(width/8*7),height+25);
+  text("X-COORD <" + (int)(ishikari.getX()) + ">",(int)(width/8),height+25);
+  text("Y-COORD <" + (int)(ishikari.getY()) + ">",(int)(width/8*3),height+25);
+  text("SPEED <" + (int)(dist(0,0,(int)(ishikari.getDirectionX()*10),(int)(ishikari.getDirectionY()*10))) + ">",(int)(width/8*5),height+25);
+  text("JUMP FUEL <" + jumpFuel + ">",(int)(width/8*7),height+25);
   stroke(50,100,200);
   noFill();
   line(0,height,width,height);
