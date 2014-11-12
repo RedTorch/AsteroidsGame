@@ -7,8 +7,10 @@ boolean up = false;
 boolean left = false;
 boolean right = false;
 boolean h = false;
+boolean gameOver = false;
 private SpaceShip ishikari = new SpaceShip();
 star[] skyFullOfStars = new star[100];
+Asteroid[] drifters = new Asteroid[10];
 public void setup() 
 {
   size(width,height+50);
@@ -16,46 +18,71 @@ public void setup()
   {
     skyFullOfStars[i] = new star();
   }
+  for(int i = 0; i < drifters.length; i++)
+  {
+    drifters[i] = new Asteroid();
+  }
 }
-public void draw() 
+public void draw()
 {
-  noFill();
-  background(0);
-  for(int i = 0; i < skyFullOfStars.length; i++)
+  if(gameOver == false)
   {
-    skyFullOfStars[i].show();
-  }
-  keyResponse();
-  ishikari.move();
-  ishikari.show();
-  if(flash>0)
-  {
-    flash = flash - 2;
-    if(flash<0)
+    noFill();
+    background(0);
+    for(int i = 0; i < skyFullOfStars.length; i++)
     {
-      flash = 0;
+      skyFullOfStars[i].show();
     }
+    for(int i = 0; i < drifters.length; i++)
+    {
+      drifters[i].move();
+      drifters[i].show();
+      if(dist(drifters[i].getX(),drifters[i].getY(),ishikari.getX(),ishikari.getY())<100)
+      {
+        stroke(200,50,50);
+        noFill();
+        rect((int)(drifters[i].getX()-25),(int)(drifters[i].getY()-25),50,50);
+        if(dist(drifters[i].getX(),drifters[i].getY(),ishikari.getX(),ishikari.getY())<25)
+        {
+          gameOver = true;
+        }
+      }
+    }
+    keyResponse();
+    ishikari.move();
+    ishikari.show();
+    if(flash>0)
+    {
+      flash = flash - 2;
+      if(flash<0)
+      {
+        flash = 0;
+      }
+    }
+    noFill();
+    stroke(50,100,200,flash);
+    rect(ishikari.getX()-(int)(flash),ishikari.getY()-(int)(flash),flash*2,flash*2);
+    noStroke();
+    fill(255,255,255,flash);
+    rect(0,0,width,height);
+    fill(0);
+    rect(0,height,width,50);
+    stroke(50,100,200);
+    fill(50,100,200);
+    textSize(15);
+    textAlign(CENTER);
+    text("X-COORD <" + (int)(ishikari.getX()) + ">",(int)(width/8),height+25);
+    text("Y-COORD <" + (int)(ishikari.getY()) + ">",(int)(width/8*3),height+25);
+    text("SPEED <" + (int)(dist(0,0,(int)(ishikari.getDirectionX()*10),(int)(ishikari.getDirectionY()*10))) + ">",(int)(width/8*5),height+25);
+    text("JUMP FUEL <" + jumpFuel + ">",(int)(width/8*7),height+25);
+    stroke(50,100,200);
+    noFill();
+    line(0,height,width,height);
+    line((int)(width/4),height,(int)(width/4),height+50);
+    line((int)(width/2),height,(int)(width/2),height+50);
+    line((int)(width/4*3),height,(int)(width/4*3),height+50);
+    rect(0,0,width-1,height+49);
   }
-  noFill();
-  stroke(50,100,200,flash);
-  rect(ishikari.getX()-(int)(flash),ishikari.getY()-(int)(flash),flash*2,flash*2);
-  noStroke();
-  fill(255,255,255,flash);
-  rect(0,0,width,height);
-  fill(0);
-  rect(0,height,width,50);
-  stroke(50,100,200);
-  fill(50,100,200);
-  textSize(15);
-  textAlign(CENTER);
-  text("X-COORD <" + (int)(ishikari.getX()) + ">",(int)(width/8),height+25);
-  text("Y-COORD <" + (int)(ishikari.getY()) + ">",(int)(width/8*3),height+25);
-  text("SPEED <" + (int)(dist(0,0,(int)(ishikari.getDirectionX()*10),(int)(ishikari.getDirectionY()*10))) + ">",(int)(width/8*5),height+25);
-  text("JUMP FUEL <" + jumpFuel + ">",(int)(width/8*7),height+25);
-  stroke(50,100,200);
-  noFill();
-  line(0,height,width,height);
-  rect(0,0,width-1,height+49);
 }
 class SpaceShip extends Floater  
 {
@@ -98,6 +125,48 @@ class SpaceShip extends Floater
       setPointDirection((int)(Math.random()*360));
       flash = 255;
     }
+}
+class Asteroid extends Floater  
+{
+    Asteroid()
+    {
+        myColor = color(200,100,50);
+        corners = 8;
+        xCorners = new int[corners];
+        yCorners = new int[corners];
+        xCorners[0] = 20;
+        yCorners[0] = 0;
+        xCorners[1] = 15;
+        yCorners[1] = 15;
+        xCorners[2] = 0;
+        yCorners[2] = 20;
+        xCorners[3] = -15;
+        yCorners[3] = 15;
+        xCorners[4] = -20;
+        yCorners[4] = 0;
+        xCorners[5] = -15;
+        yCorners[5] = -15;
+        xCorners[6] = 0;
+        yCorners[6] = -20;
+        xCorners[7] = 15;
+        yCorners[7] = -15;
+        setX((int)(Math.random()*width));
+        setY((int)(Math.random()*height));
+        setDirectionX(0); 
+        setDirectionY(0);   
+        setPointDirection((int)(Math.random()*360));
+        accelerate(3);
+    }
+    public void setX(int x) {myCenterX = x;}
+    public void setY(int y) {myCenterY = y;}
+    public int getX() {return (int)(myCenterX);}
+    public int getY() {return (int)(myCenterY);}
+    public void setDirectionX(double directionX){myDirectionX = directionX;}
+    public void setDirectionY(double directionY){myDirectionY = directionY;}
+    public double getDirectionX(){return myDirectionX;}
+    public double getDirectionY(){return myDirectionY;}
+    public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
+    public double getPointDirection(){return myPointDirection;}
 }
 abstract class Floater //Do NOT modify the Floater class! Make changes in the SpaceShip class 
 {   
@@ -158,8 +227,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   }
   public void show ()  //Draws the floater at the current position
   {
-    //fill(myColor);
-    noFill();
+    fill(0);
     stroke(myColor);    
     //convert degrees to radians for sin and cos         
     double dRadians = myPointDirection*(Math.PI/180);                 
