@@ -7,7 +7,9 @@ boolean up = false;
 boolean left = false;
 boolean right = false;
 boolean h = false;
+boolean space = false;
 boolean gameOver = false;
+int timeSurvived = 0;
 private SpaceShip ishikari = new SpaceShip();
 star[] skyFullOfStars = new star[100];
 Asteroid[] drifters = new Asteroid[10];
@@ -35,6 +37,7 @@ public void draw()
     }
     for(int i = 0; i < drifters.length; i++)
     {
+      drifters[i].setPointDirection((int)(drifters[i].getPointDirection())+3);
       drifters[i].move();
       drifters[i].show();
       if(dist(drifters[i].getX(),drifters[i].getY(),ishikari.getX(),ishikari.getY())<100)
@@ -42,12 +45,14 @@ public void draw()
         stroke(200,50,50);
         noFill();
         rect((int)(drifters[i].getX()-25),(int)(drifters[i].getY()-25),50,50);
-        if(dist(drifters[i].getX(),drifters[i].getY(),ishikari.getX(),ishikari.getY())<25)
+        if(dist(drifters[i].getX(),drifters[i].getY(),ishikari.getX(),ishikari.getY())<27)
         {
           gameOver = true;
+          space = false;
         }
       }
     }
+    timeSurvived++;
     keyResponse();
     ishikari.move();
     ishikari.show();
@@ -71,8 +76,8 @@ public void draw()
     fill(50,100,200);
     textSize(15);
     textAlign(CENTER);
-    text("X-COORD <" + (int)(ishikari.getX()) + ">",(int)(width/8),height+25);
-    text("Y-COORD <" + (int)(ishikari.getY()) + ">",(int)(width/8*3),height+25);
+    text("CO-ORDS <" + (int)(ishikari.getX()) + ", " + (int)(ishikari.getY()) + ">",(int)(width/8),height+25);
+    text("SURVIVED FOR <" + (int)(timeSurvived/60) + ">",(int)(width/8*3),height+25);
     text("SPEED <" + (int)(dist(0,0,(int)(ishikari.getDirectionX()*10),(int)(ishikari.getDirectionY()*10))) + ">",(int)(width/8*5),height+25);
     text("JUMP FUEL <" + jumpFuel + ">",(int)(width/8*7),height+25);
     stroke(50,100,200);
@@ -82,6 +87,21 @@ public void draw()
     line((int)(width/2),height,(int)(width/2),height+50);
     line((int)(width/4*3),height,(int)(width/4*3),height+50);
     rect(0,0,width-1,height+49);
+  }
+  else if(gameOver == true)
+  {
+    keyResponse();
+    fill(200,50,50);
+    background(0);
+    textSize(35);
+    text("R.I.P. ISHIKAWA AT <" + (int)(timeSurvived/60) + "> SECONDS",(int)(width/2),(int)(height/3));
+    textSize(20);
+    text("CONTROLS:",(int)(width/2),(int)(height/2)-38);
+    text("ARROW KEYS TO TURN AND ACCELERATE",(int)(width/2),(int)(height/2)-13);
+    text("<H> KEY TO INITIATE HYPERSPACE",(int)(width/2),(int)(height/2)+12);
+    text("SPACE BAR TO FIRE",(int)(width/2),(int)(height/2)+37);
+    textSize(35);
+    text("PRESS SPACE TO RE-LAUNCH",(int)(width/2),(int)(height/3*2));
   }
 }
 class SpaceShip extends Floater  
@@ -167,6 +187,48 @@ class Asteroid extends Floater
     public double getDirectionY(){return myDirectionY;}
     public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
     public double getPointDirection(){return myPointDirection;}
+}
+class Bolt extends Floater
+{
+  Bolt()
+  {
+      myColor = color(200,100,50);
+      corners = 2;
+      xCorners = new int[corners];
+      yCorners = new int[corners];
+      xCorners[0] = 20;
+      yCorners[0] = 0;
+      xCorners[1] = 15;
+      yCorners[1] = 15;
+      xCorners[2] = 0;
+      yCorners[2] = 20;
+      xCorners[3] = -15;
+      yCorners[3] = 15;
+      xCorners[4] = -20;
+      yCorners[4] = 0;
+      xCorners[5] = -15;
+      yCorners[5] = -15;
+      xCorners[6] = 0;
+      yCorners[6] = -20;
+      xCorners[7] = 15;
+      yCorners[7] = -15;
+      setX((int)(Math.random()*width));
+      setY((int)(Math.random()*height));
+      setDirectionX(0); 
+      setDirectionY(0);   
+      setPointDirection((int)(Math.random()*360));
+      accelerate(5);
+  }
+  public void setX(int x) {myCenterX = x;}
+  public void setY(int y) {myCenterY = y;}
+  public int getX() {return (int)(myCenterX);}
+  public int getY() {return (int)(myCenterY);}
+  public void setDirectionX(double directionX){myDirectionX = directionX;}
+  public void setDirectionY(double directionY){myDirectionY = directionY;}
+  public double getDirectionX(){return myDirectionX;}
+  public double getDirectionY(){return myDirectionY;}
+  public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
+  public double getPointDirection(){return myPointDirection;}
 }
 abstract class Floater //Do NOT modify the Floater class! Make changes in the SpaceShip class 
 {   
@@ -276,6 +338,10 @@ void keyPressed()
   {
     h = true;
   }
+  else if(keyCode == 32)
+  {
+    space = true;
+  }
 }
 void keyReleased()
 {
@@ -294,6 +360,10 @@ void keyReleased()
   else if(key == 'h')
   {
     h = false;
+  }
+  else if(keyCode == 32)
+  {
+    space = false;
   }
 }
 void keyResponse()
@@ -315,4 +385,30 @@ void keyResponse()
     ishikari.hyperspace();
     jumpFuel--;
   }
+  if(space == true && gameOver==true)
+  {
+    gameOver=false;
+    reset();
+  }
+}
+void reset()
+{
+  flash = 255;
+  jumpFuel = 10;
+  up = false;
+  left = false;
+  right = false;
+  h = false;
+  space = false;
+  gameOver = false;
+  ishikari = new SpaceShip();
+  for(int i = 0; i < skyFullOfStars.length; i++)
+  {
+    skyFullOfStars[i] = new star();
+  }
+  for(int i = 0; i < drifters.length; i++)
+  {
+    drifters[i] = new Asteroid();
+  }
+  timeSurvived = 0;
 }
