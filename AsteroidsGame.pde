@@ -1,4 +1,5 @@
 //your variable declarations here
+import java.util.*;
 int width = 800;
 int height = 800;
 int flash = 255;
@@ -12,17 +13,18 @@ boolean gameOver = false;
 int timeSurvived = 0;
 private SpaceShip ishikari = new SpaceShip();
 star[] skyFullOfStars = new star[100];
-Asteroid[] drifters = new Asteroid[10];
+ArrayList <Asteroid> drifters;
 public void setup() 
 {
   size(width,height+50);
+  drifters = new ArrayList <Asteroid>();
   for(int i = 0; i < skyFullOfStars.length; i++)
   {
     skyFullOfStars[i] = new star();
   }
-  for(int i = 0; i < drifters.length; i++)
+  for(int i = 0; i < 10; i++)
   {
-    drifters[i] = new Asteroid();
+    drifters.add(new Asteroid());
   }
 }
 public void draw()
@@ -35,17 +37,17 @@ public void draw()
     {
       skyFullOfStars[i].show();
     }
-    for(int i = 0; i < drifters.length; i++)
+    for(int i = 0; i < drifters.size(); i++)
     {
-      drifters[i].setPointDirection((int)(drifters[i].getPointDirection())+3);
-      drifters[i].move();
-      drifters[i].show();
-      if(dist(drifters[i].getX(),drifters[i].getY(),ishikari.getX(),ishikari.getY())<100)
+      drifters.get(i).setPointDirection((int)drifters.get(i).getPointDirection()+3);
+      drifters.get(i).move();
+      drifters.get(i).show();
+      if(dist(drifters.get(i).getX(),drifters.get(i).getY(),ishikari.getX(),ishikari.getY())<100)
       {
         stroke(200,50,50);
         noFill();
-        rect((int)(drifters[i].getX()-25),(int)(drifters[i].getY()-25),50,50);
-        if(dist(drifters[i].getX(),drifters[i].getY(),ishikari.getX(),ishikari.getY())<27)
+        rect((int)(drifters.get(i).getX()-25),(int)(drifters.get(i).getY()-25),50,50);
+        if(dist(drifters.get(i).getX(),drifters.get(i).getY(),ishikari.getX(),ishikari.getY())<27)
         {
           gameOver = true;
           space = false;
@@ -406,9 +408,9 @@ void reset()
   {
     skyFullOfStars[i] = new star();
   }
-  for(int i = 0; i < drifters.length; i++)
+  for(int i = 0; i < drifters.size(); i++)
   {
-    drifters[i] = new Asteroid();
+    drifters.set(i,new Asteroid());
   }
   timeSurvived = 0;
 }
