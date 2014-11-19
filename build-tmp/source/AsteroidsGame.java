@@ -145,6 +145,7 @@ class SpaceShip extends Floater
         setDirectionX(0); 
         setDirectionY(0);   
         setPointDirection(270);
+        wraps = true;
     }
     public void setX(int x) {myCenterX = x;}
     public void setY(int y) {myCenterY = y;}
@@ -168,52 +169,10 @@ class SpaceShip extends Floater
 }
 class Asteroid extends Floater  
 {
-    Asteroid()
-    {
-        myColor = color(200,100,50);
-        corners = 8;
-        xCorners = new int[corners];
-        yCorners = new int[corners];
-        xCorners[0] = 20;
-        yCorners[0] = 0;
-        xCorners[1] = 15;
-        yCorners[1] = 15;
-        xCorners[2] = 0;
-        yCorners[2] = 20;
-        xCorners[3] = -15;
-        yCorners[3] = 15;
-        xCorners[4] = -20;
-        yCorners[4] = 0;
-        xCorners[5] = -15;
-        yCorners[5] = -15;
-        xCorners[6] = 0;
-        yCorners[6] = -20;
-        xCorners[7] = 15;
-        yCorners[7] = -15;
-        setX((int)(Math.random()*width));
-        setY((int)(Math.random()*height));
-        setDirectionX(0); 
-        setDirectionY(0);   
-        setPointDirection((int)(Math.random()*360));
-        accelerate(3);
-    }
-    public void setX(int x) {myCenterX = x;}
-    public void setY(int y) {myCenterY = y;}
-    public int getX() {return (int)(myCenterX);}
-    public int getY() {return (int)(myCenterY);}
-    public void setDirectionX(double directionX){myDirectionX = directionX;}
-    public void setDirectionY(double directionY){myDirectionY = directionY;}
-    public double getDirectionX(){return myDirectionX;}
-    public double getDirectionY(){return myDirectionY;}
-    public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
-    public double getPointDirection(){return myPointDirection;}
-}
-class Bolt extends Floater
-{
-  Bolt()
+  Asteroid()
   {
       myColor = color(200,100,50);
-      corners = 2;
+      corners = 8;
       xCorners = new int[corners];
       yCorners = new int[corners];
       xCorners[0] = 20;
@@ -233,11 +192,43 @@ class Bolt extends Floater
       xCorners[7] = 15;
       yCorners[7] = -15;
       setX((int)(Math.random()*width));
+      setY(height + 100);
+      setDirectionX(0); 
+      setDirectionY(0);   
+      setPointDirection((int)(Math.random()*360));
+      accelerate(3);
+      wraps = true;
+  }
+  public void setX(int x) {myCenterX = x;}
+  public void setY(int y) {myCenterY = y;}
+  public int getX() {return (int)(myCenterX);}
+  public int getY() {return (int)(myCenterY);}
+  public void setDirectionX(double directionX){myDirectionX = directionX;}
+  public void setDirectionY(double directionY){myDirectionY = directionY;}
+  public double getDirectionX(){return myDirectionX;}
+  public double getDirectionY(){return myDirectionY;}
+  public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
+  public double getPointDirection(){return myPointDirection;}
+}
+class Shot extends Floater
+{
+  Shot()
+  {
+      myColor = color(200,100,50);
+      corners = 2;
+      xCorners = new int[corners];
+      yCorners = new int[corners];
+      xCorners[0] = 10;
+      yCorners[0] = 0;
+      xCorners[1] = -10;
+      yCorners[1] = 0;
+      setX((int)(Math.random()*width));
       setY((int)(Math.random()*height));
       setDirectionX(0); 
       setDirectionY(0);   
       setPointDirection((int)(Math.random()*360));
-      accelerate(5);
+      accelerate(2.5f);
+      wraps = true;
   }
   public void setX(int x) {myCenterX = x;}
   public void setY(int y) {myCenterY = y;}
@@ -259,6 +250,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   protected double myCenterX, myCenterY; //holds center coordinates   
   protected double myDirectionX, myDirectionY; //holds x and y coordinates of the vector for direction of travel   
   protected double myPointDirection; //holds current direction the ship is pointing in degrees    
+  protected boolean wraps;
   abstract public void setX(int x);  
   abstract public int getX();   
   abstract public void setY(int y);   
@@ -289,22 +281,25 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
     myCenterX += myDirectionX;    
     myCenterY += myDirectionY;     
 
-    //wrap around screen    
-    if(myCenterX >width)
-    {     
-      myCenterX = 0;    
-    }    
-    else if (myCenterX<0)
-    {     
-      myCenterX = width;    
-    }    
-    if(myCenterY >height)
-    {    
-      myCenterY = 0;    
-    }   
-    else if (myCenterY < 0)
-    {
-      myCenterY = height; 
+    //wrap around screen   
+    if(wraps == true)
+    { 
+      if(myCenterX >width)
+      {     
+        myCenterX = 0;    
+      }    
+      else if (myCenterX<0)
+      {     
+        myCenterX = width;    
+      }    
+      if(myCenterY >height)
+      {    
+        myCenterY = 0;    
+      }   
+      else if (myCenterY < 0)
+      {
+        myCenterY = height; 
+      }
     }
   }
   public void show ()  //Draws the floater at the current position
