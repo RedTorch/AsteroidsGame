@@ -45,7 +45,6 @@ public void draw()
       for(int i = 0; i < exhaust.size(); i++)
       {
         exhaust.get(i).move();
-        println(i + " - " + exhaust.get(i).getLife());
         //fill(exhaust.get(i).myColor());
         //ellipse(exhaust.get(i).getX(),exhaust.get(i).getY(),3,3);
         exhaust.get(i).show();
