@@ -32,10 +32,12 @@ int timeSurvived = 0;
 private SpaceShip ishikari = new SpaceShip();
 star[] skyFullOfStars = new star[100];
 ArrayList <Asteroid> drifters;
+ArrayList <Particle> exhaust;
 public void setup() 
 {
   size(width,height+50);
   drifters = new ArrayList <Asteroid>();
+  exhaust = new ArrayList <Particle>();
   for(int i = 0; i < skyFullOfStars.length; i++)
   {
     skyFullOfStars[i] = new star();
@@ -47,6 +49,7 @@ public void setup()
 }
 public void draw()
 {
+  gameOver = false;//CHEAT CODE
   if(gameOver == false)
   {
     noFill();
@@ -54,6 +57,21 @@ public void draw()
     for(int i = 0; i < skyFullOfStars.length; i++)
     {
       skyFullOfStars[i].show();
+    }
+    if(exhaust.size()>0)
+    {
+      for(int i = 0; i < exhaust.size(); i++)
+      {
+        exhaust.get(i).move();
+        println(i + " - " + exhaust.get(i).getLife());
+        //fill(exhaust.get(i).myColor());
+        //ellipse(exhaust.get(i).getX(),exhaust.get(i).getY(),3,3);
+        exhaust.get(i).show();
+        if(exhaust.get(i).getLife() <= 0)
+        {
+          exhaust.remove(i);
+        }
+      }
     }
     for(int i = 0; i < drifters.size(); i++)
     {
@@ -222,11 +240,11 @@ class Shot extends Floater
       yCorners[0] = 0;
       xCorners[1] = -10;
       yCorners[1] = 0;
-      setX((int)(Math.random()*width));
-      setY((int)(Math.random()*height));
+      setX(ishikari.getX());
+      setY(ishikari.getY());
       setDirectionX(0); 
       setDirectionY(0);   
-      setPointDirection((int)(Math.random()*360));
+      setPointDirection((int)(ishikari.getPointDirection()));
       accelerate(2.5f);
       wraps = true;
   }
@@ -240,6 +258,51 @@ class Shot extends Floater
   public double getDirectionY(){return myDirectionY;}
   public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
   public double getPointDirection(){return myPointDirection;}
+}
+class Particle extends Floater  
+{
+  private int life;
+  Particle()
+  {
+      myColor = color(150,150,150);
+      corners = 4;
+      xCorners = new int[corners];
+      yCorners = new int[corners];
+      xCorners[0] = 3;
+      yCorners[0] = 0;
+      xCorners[1] = 3;
+      yCorners[1] = 0;
+      xCorners[2] = 0;
+      yCorners[2] = -3;
+      xCorners[3] = -3;
+      yCorners[3] = 0;
+      setX(ishikari.getX());
+      setY(ishikari.getY());
+      setDirectionX(0); 
+      setDirectionY(0);   
+      setPointDirection((int)(ishikari.getPointDirection()+160+(int)(Math.random()*40)));
+      accelerate(1.5f);
+      wraps = true;
+      life = 255;
+  }
+  public void setX(int x) {myCenterX = x;}
+  public void setY(int y) {myCenterY = y;}
+  public int getX() {return (int)(myCenterX);}
+  public int getY() {return (int)(myCenterY);}
+  public void setDirectionX(double directionX){myDirectionX = directionX;}
+  public void setDirectionY(double directionY){myDirectionY = directionY;}
+  public double getDirectionX(){return myDirectionX;}
+  public double getDirectionY(){return myDirectionY;}
+  public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
+  public double getPointDirection(){return myPointDirection;}
+  public void show()
+  {
+    noStroke();
+    fill(150,150,150,life);
+    ellipse((int)(myCenterX),(int)(myCenterY),(int)((255-life)/10)+3,(int)((255-life)/10)+3);
+    life = life - 5;
+  }
+  public int getLife(){return life;}
 }
 abstract class Floater //Do NOT modify the Floater class! Make changes in the SpaceShip class 
 {   
@@ -331,7 +394,6 @@ class star
   public void show()
   {
     stroke(255);
-    //fill(255);
     ellipse(myX,myY,3,3);
   }
 }
@@ -386,6 +448,10 @@ public void keyResponse()
   if(up == true)
   {
     ishikari.accelerate(0.05f);
+    for(int i = 0; i < 1; i++)
+    {
+      exhaust.add(new Particle());
+    }
   }
   if(left == true)
   {
@@ -426,6 +492,10 @@ public void reset()
     drifters.set(i,new Asteroid());
   }
   timeSurvived = 0;
+  for(int i = 0; i < exhaust.size(); i++)
+  {
+    exhaust.remove(i);
+  }
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "AsteroidsGame" };
