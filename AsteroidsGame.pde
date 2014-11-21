@@ -262,7 +262,7 @@ class Particle extends Floater
       setDirectionX(0); 
       setDirectionY(0);   
       setPointDirection((int)(ishikari.getPointDirection()+160+(int)(Math.random()*40)));
-      accelerate(1.5);
+      accelerate(3);
       wraps = true;
       life = 255;
   }
@@ -279,9 +279,10 @@ class Particle extends Floater
   public void show()
   {
     noStroke();
-    fill(150,150,150,life);
-    ellipse((int)(myCenterX),(int)(myCenterY),(int)((255-life)/10)+3,(int)((255-life)/10)+3);
-    life = life - 5;
+    fill(25,50,100,life);
+    //ellipse((int)(myCenterX),(int)(myCenterY),(int)((255-life)/10)+3,(int)((255-life)/10)+3);
+    ellipse((int)(myCenterX),(int)(myCenterY),10,10);
+    life = life - 15;
   }
   public int getLife(){return life;}
 }
