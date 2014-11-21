@@ -31,7 +31,6 @@ public void setup()
 }
 public void draw()
 {
-  gameOver = false;//CHEAT CODE
   if(gameOver == false)
   {
     noFill();
