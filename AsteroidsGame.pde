@@ -4,6 +4,7 @@ int width = 800;
 int height = 800;
 int flash = 255;
 int jumpFuel = 10;
+int reload = 0;
 boolean up = false;
 boolean left = false;
 boolean right = false;
@@ -15,11 +16,13 @@ private SpaceShip ishikari = new SpaceShip();
 star[] skyFullOfStars = new star[100];
 ArrayList <Asteroid> drifters;
 ArrayList <Particle> exhaust;
+ArrayList <Shot> shots;
 public void setup() 
 {
   size(width,height+50);
   drifters = new ArrayList <Asteroid>();
   exhaust = new ArrayList <Particle>();
+  shots = new ArrayList <Shot>();
   for(int i = 0; i < skyFullOfStars.length; i++)
   {
     skyFullOfStars[i] = new star();
@@ -33,6 +36,7 @@ public void draw()
 {
   if(gameOver == false)
   {
+    if(reload>0){reload--;}
     noFill();
     background(0);
     for(int i = 0; i < skyFullOfStars.length; i++)
@@ -70,12 +74,42 @@ public void draw()
         }
       }
     }
+    for(int o = 0; o < shots.size(); o++)
+    {
+      shots.get(o).move();
+      shots.get(o).show();
+    }
+    for(int o = 0; o < shots.size(); o++)
+    {
+      for(int i = 0; i < drifters.size(); i++)
+      {
+        if(dist(drifters.get(i).getX(),drifters.get(i).getY(),shots.get(o).getX(),shots.get(o).getY())<14)
+        {
+          drifters.get(i).flipExist();
+          shots.get(o).flipExist();
+        }
+      }
+      for(int i = 0; i < drifters.size(); i++)
+      {
+        if(drifters.get(i).getExist()==false)
+        {
+          drifters.remove(i);
+        }
+      }
+    }
+    for(int o = 0; o < shots.size(); o++)
+    {
+      if(shots.get(o).getExist()==true)
+      {
+        shots.remove(o);
+      } 
+    }
     timeSurvived++;
     keyResponse();
     ishikari.move();
     ishikari.show();
     if(flash>0)
-    {
+    { 
       flash = flash - 2;
       if(flash<0)
       {
@@ -94,7 +128,7 @@ public void draw()
     fill(50,100,200);
     textSize(15);
     textAlign(CENTER);
-    text("CO-ORDS <" + (int)(ishikari.getX()) + ", " + (int)(ishikari.getY()) + ">",(int)(width/8),height+25);
+    text("LASER COOLDOWN <" + reload + ">",(int)(width/8),height+25);
     text("SURVIVED FOR <" + (int)(timeSurvived/60) + ">",(int)(width/8*3),height+25);
     text("SPEED <" + (int)(dist(0,0,(int)(ishikari.getDirectionX()*10),(int)(ishikari.getDirectionY()*10))) + ">",(int)(width/8*5),height+25);
     text("JUMP FUEL <" + jumpFuel + ">",(int)(width/8*7),height+25);
@@ -144,6 +178,7 @@ class SpaceShip extends Floater
         setDirectionY(0);   
         setPointDirection(270);
         wraps = true;
+        exist = true;
     }
     public void setX(int x) {myCenterX = x;}
     public void setY(int y) {myCenterY = y;}
@@ -196,6 +231,7 @@ class Asteroid extends Floater
       setPointDirection((int)(Math.random()*360));
       accelerate(3);
       wraps = true;
+      exist = true;
   }
   public void setX(int x) {myCenterX = x;}
   public void setY(int y) {myCenterY = y;}
@@ -210,23 +246,29 @@ class Asteroid extends Floater
 }
 class Shot extends Floater
 {
+  boolean exist;
   Shot()
   {
       myColor = color(200,100,50);
-      corners = 2;
+      corners = 4;
       xCorners = new int[corners];
       yCorners = new int[corners];
       xCorners[0] = 10;
-      yCorners[0] = 0;
-      xCorners[1] = -10;
-      yCorners[1] = 0;
+      yCorners[0] = -2;
+      xCorners[1] = 10;
+      yCorners[1] = 2;
+      xCorners[2] = -10;
+      yCorners[2] = 2;
+      xCorners[3] = -10;
+      yCorners[3] = -2;
       setX(ishikari.getX());
       setY(ishikari.getY());
       setDirectionX(0); 
       setDirectionY(0);   
       setPointDirection((int)(ishikari.getPointDirection()));
-      accelerate(2.5);
+      accelerate(10);
       wraps = true;
+      exist = true;
   }
   public void setX(int x) {myCenterX = x;}
   public void setY(int y) {myCenterY = y;}
@@ -238,13 +280,20 @@ class Shot extends Floater
   public double getDirectionY(){return myDirectionY;}
   public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
   public double getPointDirection(){return myPointDirection;}
+  public void move ()   //move the floater in the current direction of travel
+  {      
+    //change the x and y coordinates by myDirectionX and myDirectionY       
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY;
+    accelerate(0.5);
+  }
 }
 class Particle extends Floater  
 {
   private int life;
-  Particle()
+  Particle(color leColor)
   {
-      myColor = color(150,150,150);
+      myColor = color(leColor);
       corners = 4;
       xCorners = new int[corners];
       yCorners = new int[corners];
@@ -264,6 +313,7 @@ class Particle extends Floater
       accelerate(3);
       wraps = true;
       life = 255;
+      exist = true;
   }
   public void setX(int x) {myCenterX = x;}
   public void setY(int y) {myCenterY = y;}
@@ -295,6 +345,7 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   protected double myDirectionX, myDirectionY; //holds x and y coordinates of the vector for direction of travel   
   protected double myPointDirection; //holds current direction the ship is pointing in degrees    
   protected boolean wraps;
+  protected boolean exist;
   abstract public void setX(int x);  
   abstract public int getX();   
   abstract public void setY(int y);   
@@ -305,6 +356,8 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
   abstract public double getDirectionY();   
   abstract public void setPointDirection(int degrees);   
   abstract public double getPointDirection(); 
+  public void flipExist(){exist = false;}
+  public boolean getExist(){return exist;}
   //Accelerates the floater in the direction it is pointing (myPointDirection)   
   public void accelerate (double dAmount)   
   {          
@@ -343,6 +396,13 @@ abstract class Floater //Do NOT modify the Floater class! Make changes in the Sp
       else if (myCenterY < 0)
       {
         myCenterY = height; 
+      }
+    }
+    else if(wraps = false)
+    {
+      if(myCenterX >width || myCenterY >height || myCenterY < 0 || myCenterX<0)
+      {
+        exist = false;
       }
     }
   }
@@ -431,7 +491,7 @@ void keyResponse()
     ishikari.accelerate(0.05);
     for(int i = 0; i < 1; i++)
     {
-      exhaust.add(new Particle());
+      exhaust.add(new Particle(color(50,100,200)));
     }
   }
   if(left == true)
@@ -452,6 +512,11 @@ void keyResponse()
     gameOver=false;
     reset();
   }
+  else if(space == true && gameOver == false && reload == 0)
+  {
+    shots.add(new Shot());
+    reload = reload + 120;
+  }
 }
 void reset()
 {
@@ -468,13 +533,21 @@ void reset()
   {
     skyFullOfStars[i] = new star();
   }
-  for(int i = 0; i < drifters.size(); i++)
+  while(drifters.size()>0)
   {
-    drifters.set(i,new Asteroid());
+    drifters.remove(0);
+  }
+  for(int i = 0; i < 10; i++)
+  {
+    drifters.add(new Asteroid());
   }
   timeSurvived = 0;
   for(int i = 0; i < exhaust.size(); i++)
   {
     exhaust.remove(i);
+  }
+  for(int i = 0; i < shots.size(); i++)
+  {
+    shots.remove(i);
   }
 }
