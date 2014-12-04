@@ -30,6 +30,11 @@ boolean h = false;
 boolean space = false;
 boolean gameOver = false;
 int timeSurvived = 0;
+int score = 0;
+int gameOverTime = 0;
+boolean alertBlink = true;
+int gunToggle = 0;
+String gunMode = "GATLING"; //Options: "AUTOCANNON", "SPREADGUN", "GATLING", "MULTIGUN"
 private SpaceShip ishikari = new SpaceShip();
 star[] skyFullOfStars = new star[100];
 ArrayList <Asteroid> drifters;
@@ -89,6 +94,8 @@ public void draw()
         {
           gameOver = true;
           space = false;
+          gameOverTime = 60;
+          alertBlink = false;
         }
       }
     }
@@ -101,7 +108,7 @@ public void draw()
     {
       for(int i = 0; i < drifters.size(); i++)
       {
-        if(dist(drifters.get(i).getX(),drifters.get(i).getY(),shots.get(o).getX(),shots.get(o).getY())<14)
+        if(dist(drifters.get(i).getX(),drifters.get(i).getY(),shots.get(o).getX(),shots.get(o).getY())<15)
         {
           drifters.get(i).flipExist();
           shots.get(o).flipExist();
@@ -111,13 +118,16 @@ public void draw()
       {
         if(drifters.get(i).getExist()==false)
         {
+          drifters.add(new Asteroid());
+          drifters.add(new Asteroid());
           drifters.remove(i);
+          score++;
         }
       }
     }
     for(int o = 0; o < shots.size(); o++)
     {
-      if(shots.get(o).getExist()==true)
+      if(shots.get(o).getX()<0 || shots.get(o).getX()>width || shots.get(o).getY()<0 || shots.get(o).getY()>height)
       {
         shots.remove(o);
       } 
@@ -146,9 +156,9 @@ public void draw()
     fill(50,100,200);
     textSize(15);
     textAlign(CENTER);
-    text("LASER COOLDOWN <" + reload + ">",(int)(width/8),height+25);
+    text(gunMode + " <" + reload + ">",(int)(width/8),height+25);
     text("SURVIVED FOR <" + (int)(timeSurvived/60) + ">",(int)(width/8*3),height+25);
-    text("SPEED <" + (int)(dist(0,0,(int)(ishikari.getDirectionX()*10),(int)(ishikari.getDirectionY()*10))) + ">",(int)(width/8*5),height+25);
+    text("SCORE <" + score + ">",(int)(width/8*5),height+25);
     text("JUMP FUEL <" + jumpFuel + ">",(int)(width/8*7),height+25);
     stroke(50,100,200);
     noFill();
@@ -160,18 +170,34 @@ public void draw()
   }
   else if(gameOver == true)
   {
-    keyResponse();
+    gameOverTime--;
     fill(200,50,50);
     background(0);
-    textSize(35);
-    text("R.I.P. ISHIKAWA AT <" + (int)(timeSurvived/60) + "> SECONDS",(int)(width/2),(int)(height/3));
+    textSize(32);
+    text("R.I.P. ISHIKAWA AT <" + (int)(timeSurvived/60) + "> SECONDS, SCORE <" + score + ">",(int)(width/2),(int)(height/3));
     textSize(20);
-    text("CONTROLS:",(int)(width/2),(int)(height/2)-38);
-    text("ARROW KEYS TO TURN AND ACCELERATE",(int)(width/2),(int)(height/2)-13);
-    text("<H> KEY TO INITIATE HYPERSPACE",(int)(width/2),(int)(height/2)+12);
-    text("SPACE BAR TO FIRE",(int)(width/2),(int)(height/2)+37);
-    textSize(35);
-    text("PRESS SPACE TO RE-LAUNCH",(int)(width/2),(int)(height/3*2));
+    text("CONTROLS:",(int)(width/2),(int)(height/2)-50);
+    text("ARROW KEYS TO TURN AND ACCELERATE",(int)(width/2),(int)(height/2)-25);
+    text("<H> KEY TO INITIATE HYPERSPACE",(int)(width/2),(int)(height/2));
+    text("SPACE BAR TO FIRE",(int)(width/2),(int)(height/2)+25);
+    text("<F> KEY TO CYCLE THROUGH FIRING MODES",(int)(width/2),(int)(height/2)+50);
+    if(gameOverTime<=0)
+    {
+      if(gameOverTime%15==0)
+      {
+        alertBlink = !alertBlink;
+      }
+      //fill(50,12,12);
+      //textSize(35);
+      //text("-PRESS SPACE TO RE-LAUNCH-",(int)(width/2),(int)(height/3*2));
+      if(alertBlink == true)
+      {
+        fill(200,50,50);
+        textSize(35);
+        text("-PRESS SPACE TO RE-LAUNCH-",(int)(width/2),(int)(height/3*2));
+      }
+      keyResponse();
+    }
   }
 }
 class SpaceShip extends Floater  
@@ -265,25 +291,25 @@ class Asteroid extends Floater
 class Shot extends Floater
 {
   boolean exist;
-  Shot()
+  Shot(int bearingAlt)
   {
       myColor = color(200,100,50);
       corners = 4;
       xCorners = new int[corners];
       yCorners = new int[corners];
-      xCorners[0] = 10;
+      xCorners[0] = 3;
       yCorners[0] = -2;
-      xCorners[1] = 10;
+      xCorners[1] = 3;
       yCorners[1] = 2;
-      xCorners[2] = -10;
+      xCorners[2] = -3;
       yCorners[2] = 2;
-      xCorners[3] = -10;
+      xCorners[3] = -3;
       yCorners[3] = -2;
       setX(ishikari.getX());
       setY(ishikari.getY());
       setDirectionX(0); 
       setDirectionY(0);   
-      setPointDirection((int)(ishikari.getPointDirection()));
+      setPointDirection((int)(ishikari.getPointDirection())+bearingAlt);
       accelerate(10);
       wraps = true;
       exist = true;
@@ -501,6 +527,30 @@ public void keyReleased()
   {
     space = false;
   }
+  else if(key == 'f')
+  {
+    gunToggle++;
+    if(gunToggle>4)
+    {
+      gunToggle = 1;
+    }
+    if(gunToggle==1)
+    {
+      gunMode="SPREADGUN";
+    }
+    else if(gunToggle==2)
+    {
+      gunMode="AUTOCANNON";
+    }
+    else if(gunToggle==3)
+    {
+      gunMode="GATLING";
+    }
+    else if(gunToggle==4)
+    {
+      gunMode="MULTIGUN";
+    }
+  }
 }
 public void keyResponse()
 {
@@ -532,8 +582,69 @@ public void keyResponse()
   }
   else if(space == true && gameOver == false && reload == 0)
   {
-    shots.add(new Shot());
-    reload = reload + 120;
+    if(gunMode=="SPREADGUN")
+    {
+      shots.add(new Shot(9));
+      shots.add(new Shot(6));
+      shots.add(new Shot(3));
+      shots.add(new Shot(0));
+      shots.add(new Shot(-3));
+      shots.add(new Shot(-6));
+      shots.add(new Shot(-9));
+      reload = reload + 15;
+    }
+    else if(gunMode=="AUTOCANNON")
+    {
+      shots.add(new Shot(0));
+      reload = reload + 5;
+    }
+    else if(gunMode=="GATLING")
+    {
+      shots.add(new Shot((int)(Math.random()*16-8)));
+      reload = reload + 3;
+    }
+    else if(gunMode=="MULTIGUN")
+    {
+      shots.add(new Shot(30));
+      shots.add(new Shot(20));
+      shots.add(new Shot(10));
+      shots.add(new Shot(0));
+      shots.add(new Shot(350));
+      shots.add(new Shot(340));
+      shots.add(new Shot(330));
+      shots.add(new Shot(320));
+      shots.add(new Shot(310));//E
+      shots.add(new Shot(120));
+      shots.add(new Shot(110));
+      shots.add(new Shot(100));
+      shots.add(new Shot(90));
+      shots.add(new Shot(80));
+      shots.add(new Shot(70));
+      shots.add(new Shot(60));
+      shots.add(new Shot(50));
+      shots.add(new Shot(40));
+      shots.add(new Shot(30));//E
+      shots.add(new Shot(210));
+      shots.add(new Shot(200));
+      shots.add(new Shot(190));
+      shots.add(new Shot(180));
+      shots.add(new Shot(170));
+      shots.add(new Shot(160));
+      shots.add(new Shot(150));
+      shots.add(new Shot(140));
+      shots.add(new Shot(130));
+      shots.add(new Shot(120));//E
+      shots.add(new Shot(300));
+      shots.add(new Shot(290));
+      shots.add(new Shot(280));
+      shots.add(new Shot(270));
+      shots.add(new Shot(260));
+      shots.add(new Shot(250));
+      shots.add(new Shot(240));
+      shots.add(new Shot(230));
+      shots.add(new Shot(220));//E
+      reload = reload + 160;
+    }
   }
 }
 public void reset()
@@ -568,6 +679,8 @@ public void reset()
   {
     shots.remove(i);
   }
+  reload = 0;
+  score = 0;
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "AsteroidsGame" };
