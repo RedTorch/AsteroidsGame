@@ -272,7 +272,7 @@ class Asteroid extends Floater
       setY(height + 100);
       setDirectionX(0); 
       setDirectionY(0);   
-      //setPointDirection((int)(Math.random()*360));
+      setPointDirection((int)(Math.random()*360));
       accelerate(3);
       wraps = true;
       exist = true;
@@ -290,16 +290,16 @@ class Asteroid extends Floater
   public void move()
   {
     //sets asteroid to point at player (!!!)
-    if(dist(ishikari.getX(),ishikari.getY(),getX(),getY())<300)
-    {
-      double moveX = ishikari.getX()-myCenterX;
-      double moveY = ishikari.getY()-myCenterY;
-      if(moveX>0&&moveY>0){setPointDirection((int)((Math.asin(moveY))/Math.PI*360));}
-      if(moveX>0&&moveY>0){setPointDirection((int)((Math.acos(moveX))/Math.PI*360));}
-      if(moveX>0&&moveY>0){setPointDirection((int)((360-Math.acos(moveX))/Math.PI*360));}
-      if(moveX>0&&moveY>0){setPointDirection((int)((Math.sin(moveY))/Math.PI*360));}
-      accelerate(0.1f);
-    }
+    // if(dist(ishikari.getX(),ishikari.getY(),getX(),getY())<300)
+    // {
+    //   double moveX = ishikari.getX()-myCenterX;
+    //   double moveY = ishikari.getY()-myCenterY;
+    //   if(moveX>0&&moveY>0){setPointDirection((int)((Math.asin(moveY))/Math.PI*360));}
+    //   if(moveX>0&&moveY>0){setPointDirection((int)((Math.acos(moveX))/Math.PI*360));}
+    //   if(moveX>0&&moveY>0){setPointDirection((int)((360-Math.acos(moveX))/Math.PI*360));}
+    //   if(moveX>0&&moveY>0){setPointDirection((int)((Math.sin(moveY))/Math.PI*360));}
+    //   accelerate(0.1);
+    // }
     //change the x and y coordinates by myDirectionX and myDirectionY       
     myCenterX += myDirectionX;    
     myCenterY += myDirectionY;

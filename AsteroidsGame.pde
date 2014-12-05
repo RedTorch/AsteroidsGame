@@ -254,7 +254,7 @@ class Asteroid extends Floater
       setY(height + 100);
       setDirectionX(0); 
       setDirectionY(0);   
-      //setPointDirection((int)(Math.random()*360));
+      setPointDirection((int)(Math.random()*360));
       accelerate(3);
       wraps = true;
       exist = true;
