@@ -82,7 +82,7 @@ public void draw()
     }
     for(int i = 0; i < drifters.size(); i++)
     {
-      drifters.get(i).setPointDirection((int)drifters.get(i).getPointDirection()+3);
+      //drifters.get(i).setPointDirection((int)drifters.get(i).getPointDirection()+3);
       drifters.get(i).move();
       drifters.get(i).show();
       if(dist(drifters.get(i).getX(),drifters.get(i).getY(),ishikari.getX(),ishikari.getY())<100)
@@ -127,7 +127,7 @@ public void draw()
     }
     for(int o = 0; o < shots.size(); o++)
     {
-      if(shots.get(o).getX()<0 || shots.get(o).getX()>width || shots.get(o).getY()<0 || shots.get(o).getY()>height)
+      if((shots.get(o).getX()<0 || shots.get(o).getX()>width || shots.get(o).getY()<0 || shots.get(o).getY()>height)||shots.get(o).getExist()==false)
       {
         shots.remove(o);
       } 
@@ -272,7 +272,7 @@ class Asteroid extends Floater
       setY(height + 100);
       setDirectionX(0); 
       setDirectionY(0);   
-      setPointDirection((int)(Math.random()*360));
+      //setPointDirection((int)(Math.random()*360));
       accelerate(3);
       wraps = true;
       exist = true;
@@ -287,10 +287,52 @@ class Asteroid extends Floater
   public double getDirectionY(){return myDirectionY;}
   public void setPointDirection(int leDegrees){myPointDirection = leDegrees;}
   public double getPointDirection(){return myPointDirection;}
+  public void move()
+  {
+    //sets asteroid to point at player (!!!)
+    if(dist(ishikari.getX(),ishikari.getY(),getX(),getY())<300)
+    {
+      double moveX = ishikari.getX()-myCenterX;
+      double moveY = ishikari.getY()-myCenterY;
+      if(moveX>0&&moveY>0){setPointDirection((int)((Math.asin(moveY))/Math.PI*360));}
+      if(moveX>0&&moveY>0){setPointDirection((int)((Math.acos(moveX))/Math.PI*360));}
+      if(moveX>0&&moveY>0){setPointDirection((int)((360-Math.acos(moveX))/Math.PI*360));}
+      if(moveX>0&&moveY>0){setPointDirection((int)((Math.sin(moveY))/Math.PI*360));}
+      accelerate(0.1f);
+    }
+    //change the x and y coordinates by myDirectionX and myDirectionY       
+    myCenterX += myDirectionX;    
+    myCenterY += myDirectionY;
+    //wrap around screen   
+    if(wraps == true)
+    { 
+      if(myCenterX >width)
+      {     
+        myCenterX = 0;    
+      }    
+      else if (myCenterX<0)
+      {     
+        myCenterX = width;    
+      }    
+      if(myCenterY >height)
+      {    
+        myCenterY = 0;    
+      }   
+      else if (myCenterY < 0)
+      {
+        myCenterY = height; 
+      }
+    }
+    else if(wraps = false)
+    {
+      if(myCenterX >width || myCenterY >height || myCenterY < 0 || myCenterX<0)
+      {
+        exist = false;
+      }
+    }}
 }
 class Shot extends Floater
 {
-  boolean exist;
   Shot(int bearingAlt)
   {
       myColor = color(200,100,50);
