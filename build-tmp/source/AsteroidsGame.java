@@ -23,6 +23,7 @@ int height = 800;
 int flash = 255;
 int jumpFuel = 10;
 int reload = 0;
+int energy = 1000;
 boolean up = false;
 boolean left = false;
 boolean right = false;
@@ -34,7 +35,7 @@ int score = 0;
 int gameOverTime = 0;
 boolean alertBlink = true;
 int gunToggle = 0;
-String gunMode = "GATLING"; //Options: "AUTOCANNON", "SPREADGUN", "GATLING", "MULTIGUN"
+String gunMode = "AUTOCANNON"; //Options: "AUTOCANNON", "SPREADGUN", "GATLING", "MULTIGUN"
 private SpaceShip ishikari = new SpaceShip();
 star[] skyFullOfStars = new star[100];
 ArrayList <Asteroid> drifters;
@@ -60,6 +61,7 @@ public void draw()
   if(gameOver == false)
   {
     if(reload>0){reload--;}
+    if(energy<1000){energy = energy + 1;}
     noFill();
     background(0);
     for(int i = 0; i < skyFullOfStars.length; i++)
@@ -82,7 +84,7 @@ public void draw()
     }
     for(int i = 0; i < drifters.size(); i++)
     {
-      //drifters.get(i).setPointDirection((int)drifters.get(i).getPointDirection()+3);
+      drifters.get(i).setPointDirection((int)drifters.get(i).getPointDirection()+3);
       drifters.get(i).move();
       drifters.get(i).show();
       if(dist(drifters.get(i).getX(),drifters.get(i).getY(),ishikari.getX(),ishikari.getY())<100)
@@ -157,7 +159,7 @@ public void draw()
     textSize(15);
     textAlign(CENTER);
     text(gunMode + " <" + reload + ">",(int)(width/8),height+25);
-    text("SURVIVED FOR <" + (int)(timeSurvived/60) + ">",(int)(width/8*3),height+25);
+    text("ENERGY <" + energy + ">",(int)(width/8*3),height+25);
     text("SCORE <" + score + ">",(int)(width/8*5),height+25);
     text("JUMP FUEL <" + jumpFuel + ">",(int)(width/8*7),height+25);
     stroke(50,100,200);
@@ -174,7 +176,7 @@ public void draw()
     fill(200,50,50);
     background(0);
     textSize(32);
-    text("R.I.P. ISHIKAWA AT <" + (int)(timeSurvived/60) + "> SECONDS, SCORE <" + score + ">",(int)(width/2),(int)(height/3));
+    text("R.I.P. DE-ISHIKARI. SCORE <" + score + ">",(int)(width/2),(int)(height/3));
     textSize(20);
     text("CONTROLS:",(int)(width/2),(int)(height/2)-50);
     text("ARROW KEYS TO TURN AND ACCELERATE",(int)(width/2),(int)(height/2)-25);
@@ -624,7 +626,7 @@ public void keyResponse()
   }
   else if(space == true && gameOver == false && reload == 0)
   {
-    if(gunMode=="SPREADGUN")
+    if(gunMode=="SPREADGUN" && energy > 100)
     {
       shots.add(new Shot(9));
       shots.add(new Shot(6));
@@ -634,18 +636,21 @@ public void keyResponse()
       shots.add(new Shot(-6));
       shots.add(new Shot(-9));
       reload = reload + 15;
+      energy = energy - 100;
     }
-    else if(gunMode=="AUTOCANNON")
+    else if(gunMode=="AUTOCANNON" && energy > 20)
     {
       shots.add(new Shot(0));
       reload = reload + 5;
+      energy = energy - 10;
     }
-    else if(gunMode=="GATLING")
+    else if(gunMode=="GATLING" && energy > 30)
     {
       shots.add(new Shot((int)(Math.random()*16-8)));
       reload = reload + 3;
+      energy = energy - 15;
     }
-    else if(gunMode=="MULTIGUN")
+    else if(gunMode=="MULTIGUN" && energy > 400)
     {
       shots.add(new Shot(30));
       shots.add(new Shot(20));
@@ -686,6 +691,7 @@ public void keyResponse()
       shots.add(new Shot(230));
       shots.add(new Shot(220));//E
       reload = reload + 160;
+      energy = energy - 400;
     }
   }
 }
@@ -723,6 +729,7 @@ public void reset()
   }
   reload = 0;
   score = 0;
+  energy = 1000;
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "AsteroidsGame" };
