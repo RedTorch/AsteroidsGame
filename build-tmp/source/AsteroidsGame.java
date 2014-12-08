@@ -122,6 +122,10 @@ public void draw()
         {
           drifters.add(new Asteroid());
           drifters.add(new Asteroid());
+          for(int randy = 0; randy < 7; randy++)
+          {
+            exhaust.add(new Particle(color(200,100,50),drifters.get(i).getX(),drifters.get(i).getY(),(int)(Math.random()*360)));
+          }
           drifters.remove(i);
           score++;
         }
@@ -379,7 +383,7 @@ class Shot extends Floater
 class Particle extends Floater  
 {
   private int life;
-  Particle(int leColor)
+  Particle(int leColor,int x,int y,int bearing)
   {
       myColor = color(leColor);
       corners = 4;
@@ -393,11 +397,11 @@ class Particle extends Floater
       yCorners[2] = -3;
       xCorners[3] = -3;
       yCorners[3] = 0;
-      setX(ishikari.getX());
-      setY(ishikari.getY());
+      setX(x);
+      setY(y);
       setDirectionX(0); 
       setDirectionY(0);   
-      setPointDirection((int)(ishikari.getPointDirection()+160+(int)(Math.random()*40)));
+      setPointDirection(bearing);
       accelerate(3);
       wraps = true;
       life = 255;
@@ -416,7 +420,7 @@ class Particle extends Floater
   public void show()
   {
     noStroke();
-    fill(25,50,100,life);
+    fill(red(myColor),green(myColor),blue(myColor),life);
     //ellipse((int)(myCenterX),(int)(myCenterY),(int)((255-life)/10)+3,(int)((255-life)/10)+3);
     ellipse((int)(myCenterX),(int)(myCenterY),10,10);
     life = life - 15;
@@ -603,7 +607,7 @@ public void keyResponse()
     ishikari.accelerate(0.05f);
     for(int i = 0; i < 1; i++)
     {
-      exhaust.add(new Particle(color(50,100,200)));
+      exhaust.add(new Particle(color(50,100,200),ishikari.getX(),ishikari.getY(),(int)(ishikari.getPointDirection()+160+(int)(Math.random()*40))));
     }
   }
   if(left == true)
