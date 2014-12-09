@@ -104,7 +104,7 @@ public void draw()
         {
           drifters.add(new Asteroid());
           drifters.add(new Asteroid());
-          for(int randy = 0; randy < 7; randy++)
+          for(int randy = 0; randy < 10; randy++)
           {
             exhaust.add(new Particle(color(200,100,50),drifters.get(i).getX(),drifters.get(i).getY(),(int)(Math.random()*360)));
           }
@@ -586,7 +586,7 @@ void keyResponse()
 {
   if(up == true)
   {
-    ishikari.accelerate(0.05);
+    ishikari.accelerate(0.07);
     for(int i = 0; i < 1; i++)
     {
       exhaust.add(new Particle(color(50,100,200),ishikari.getX(),ishikari.getY(),(int)(ishikari.getPointDirection()+160+(int)(Math.random()*40))));
@@ -594,11 +594,11 @@ void keyResponse()
   }
   if(left == true)
   {
-    ishikari.setPointDirection((int)(ishikari.getPointDirection()-5));
+    ishikari.setPointDirection((int)(ishikari.getPointDirection()-7));
   }
   if(right == true)
   {
-    ishikari.setPointDirection((int)(ishikari.getPointDirection()+5));
+    ishikari.setPointDirection((int)(ishikari.getPointDirection()+7));
   }
   if(h == true && flash == 0 && jumpFuel >= 1)
   {
