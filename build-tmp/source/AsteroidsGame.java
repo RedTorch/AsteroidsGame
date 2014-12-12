@@ -31,6 +31,7 @@ boolean h = false;
 boolean space = false;
 boolean gameOver = false;
 int timeSurvived = 0;
+int spawnSize = 100;
 int score = 0;
 int gameOverTime = 0;
 boolean alertBlink = true;
@@ -120,14 +121,23 @@ public void draw()
       {
         if(drifters.get(i).getExist()==false)
         {
-          drifters.add(new Asteroid());
-          drifters.add(new Asteroid());
+          //drifters.add(new Asteroid());
+          //drifters.add(new Asteroid());
           for(int randy = 0; randy < 10; randy++)
           {
             exhaust.add(new Particle(color(200,100,50),drifters.get(i).getX(),drifters.get(i).getY(),(int)(Math.random()*360)));
           }
           drifters.remove(i);
           score++;
+        }
+        if(drifters.size()==0)
+        {
+          for(int yo = 0; yo < spawnSize; yo++)
+          {
+            drifters.add(new Asteroid());
+          }
+          spawnSize = spawnSize + 20;
+          energy = 1000;
         }
       }
     }
@@ -274,12 +284,20 @@ class Asteroid extends Floater
       yCorners[6] = -20;
       xCorners[7] = 15;
       yCorners[7] = -15;
-      setX((int)(Math.random()*width));
-      setY(height + 100);
+      if((int)(Math.random()*100)<50)
+      {
+        setX((int)(Math.random()*width));
+        setY(height + 100);
+      }
+      else
+      {
+        setY((int)(Math.random()*height));
+        setX(height + 100);
+      }
       setDirectionX(0); 
       setDirectionY(0);   
       setPointDirection((int)(Math.random()*360));
-      accelerate(1);
+      accelerate(3);
       wraps = true;
       exist = true;
   }
@@ -295,17 +313,6 @@ class Asteroid extends Floater
   public double getPointDirection(){return myPointDirection;}
   public void move()
   {
-    //sets asteroid to point at player (!!!)
-    // if(dist(ishikari.getX(),ishikari.getY(),getX(),getY())<300)
-    // {
-    //   double moveX = ishikari.getX()-myCenterX;
-    //   double moveY = ishikari.getY()-myCenterY;
-    //   if(moveX>0&&moveY>0){setPointDirection((int)((Math.asin(moveY))/Math.PI*360));}
-    //   if(moveX>0&&moveY>0){setPointDirection((int)((Math.acos(moveX))/Math.PI*360));}
-    //   if(moveX>0&&moveY>0){setPointDirection((int)((360-Math.acos(moveX))/Math.PI*360));}
-    //   if(moveX>0&&moveY>0){setPointDirection((int)((Math.sin(moveY))/Math.PI*360));}
-    //   accelerate(0.1);
-    // }
     //change the x and y coordinates by myDirectionX and myDirectionY       
     myCenterX += myDirectionX;    
     myCenterY += myDirectionY;
@@ -639,8 +646,8 @@ public void keyResponse()
       shots.add(new Shot(-3));
       shots.add(new Shot(-6));
       shots.add(new Shot(-9));
-      reload = reload + 15;
-      energy = energy - 100;
+      reload = reload + 5;
+      energy = energy - 25;
     }
     else if(gunMode=="AUTOCANNON" && energy > 20)
     {
@@ -656,44 +663,7 @@ public void keyResponse()
     }
     else if(gunMode=="MULTIGUN" && energy > 400)
     {
-      shots.add(new Shot(30));
-      shots.add(new Shot(20));
-      shots.add(new Shot(10));
-      shots.add(new Shot(0));
-      shots.add(new Shot(350));
-      shots.add(new Shot(340));
-      shots.add(new Shot(330));
-      shots.add(new Shot(320));
-      shots.add(new Shot(310));//E
-      shots.add(new Shot(120));
-      shots.add(new Shot(110));
-      shots.add(new Shot(100));
-      shots.add(new Shot(90));
-      shots.add(new Shot(80));
-      shots.add(new Shot(70));
-      shots.add(new Shot(60));
-      shots.add(new Shot(50));
-      shots.add(new Shot(40));
-      shots.add(new Shot(30));//E
-      shots.add(new Shot(210));
-      shots.add(new Shot(200));
-      shots.add(new Shot(190));
-      shots.add(new Shot(180));
-      shots.add(new Shot(170));
-      shots.add(new Shot(160));
-      shots.add(new Shot(150));
-      shots.add(new Shot(140));
-      shots.add(new Shot(130));
-      shots.add(new Shot(120));//E
-      shots.add(new Shot(300));
-      shots.add(new Shot(290));
-      shots.add(new Shot(280));
-      shots.add(new Shot(270));
-      shots.add(new Shot(260));
-      shots.add(new Shot(250));
-      shots.add(new Shot(240));
-      shots.add(new Shot(230));
-      shots.add(new Shot(220));//E
+      for(int i = 0; i < 360; i = i  = 10){shots.add(new Shot(i));}
       reload = reload + 160;
       energy = energy - 400;
     }
@@ -734,6 +704,7 @@ public void reset()
   reload = 0;
   score = 0;
   energy = 1000;
+  spawnSize = 20;
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "AsteroidsGame" };
