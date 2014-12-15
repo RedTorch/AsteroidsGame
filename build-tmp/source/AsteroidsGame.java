@@ -31,7 +31,7 @@ boolean h = false;
 boolean space = false;
 boolean gameOver = false;
 int timeSurvived = 0;
-int spawnSize = 100;
+int spawnSize = 40;
 int score = 0;
 int gameOverTime = 0;
 boolean alertBlink = true;
@@ -52,7 +52,7 @@ public void setup()
   {
     skyFullOfStars[i] = new star();
   }
-  for(int i = 0; i < 10; i++)
+  for(int i = 0; i < 40; i++)
   {
     drifters.add(new Asteroid());
   }
@@ -61,6 +61,20 @@ public void draw()
 {
   if(gameOver == false)
   {
+    for(int i = 0; i < drifters.size(); i++)
+    {
+      int x = ishikari.getX();
+      int y = ishikari.getY();
+      while(x > 0 && x < width && y > 0 && y <height)
+      {
+        if(dist(x,y,drifters.get(i).getX,drifters.get(i).getY)<30)
+        {
+          space = true;
+        }
+        x = x + (int)(Math.cos(ishikari.getPointDirection())*3);
+        y = y + (int)(Math.sin(ishikari.getPointDirection())*3);
+      }
+    }
     if(reload>0){reload--;}
     if(energy<1000){energy = energy + 1;}
     noFill();
@@ -136,7 +150,7 @@ public void draw()
           {
             drifters.add(new Asteroid());
           }
-          spawnSize = spawnSize + 20;
+          spawnSize = spawnSize + 40;
           energy = 1000;
         }
       }
@@ -260,8 +274,9 @@ class SpaceShip extends Floater
       flash = 255;
     }
 }
-class Asteroid extends Floater  
+class Asteroid extends Floater
 {
+  private int randDir;
   Asteroid()
   {
       myColor = color(200,100,50);
@@ -284,20 +299,38 @@ class Asteroid extends Floater
       yCorners[6] = -20;
       xCorners[7] = 15;
       yCorners[7] = -15;
-      if((int)(Math.random()*100)<50)
+      randDir = (int)(Math.random()*100);
+      if(randDir<50)
       {
-        setX((int)(Math.random()*width));
+        if((int)(Math.random()*100)<50)
+        {
+          setX((int)(Math.random()*width));
+          setY(height + 100);
+        }
+        else
+        {
+          setY((int)(Math.random()*height));
+          setX(height + 100);
+        }
+      }
+      else if(randDir>=50 && randDir<75)
+      {
+        setX((int)(Math.random()*60)+ishikari.getX()-30);
         setY(height + 100);
+        if((int)(Math.random()*100)<50){setPointDirection((int)(Math.random()*20)+80);}
+        else{setPointDirection((int)(Math.random()*20)-100);}
       }
       else
       {
-        setY((int)(Math.random()*height));
+        setY((int)(Math.random()*60)+ishikari.getY()-30);
         setX(height + 100);
+        if((int)(Math.random()*100)<50){setPointDirection((int)(Math.random()*20)+170);}
+        else{setPointDirection((int)(Math.random()*20)-10);}
       }
       setDirectionX(0); 
       setDirectionY(0);   
       setPointDirection((int)(Math.random()*360));
-      accelerate(3);
+      accelerate((int)(Math.random()*2)+2.5f);
       wraps = true;
       exist = true;
   }
@@ -342,7 +375,8 @@ class Asteroid extends Floater
       {
         exist = false;
       }
-    }}
+    }
+  }
 }
 class Shot extends Floater
 {
@@ -611,7 +645,7 @@ public void keyResponse()
 {
   if(up == true)
   {
-    ishikari.accelerate(0.07f);
+    ishikari.accelerate(0.1f);
     for(int i = 0; i < 1; i++)
     {
       exhaust.add(new Particle(color(50,100,200),ishikari.getX(),ishikari.getY(),(int)(ishikari.getPointDirection()+160+(int)(Math.random()*40))));
@@ -619,11 +653,11 @@ public void keyResponse()
   }
   if(left == true)
   {
-    ishikari.setPointDirection((int)(ishikari.getPointDirection()-7));
+    ishikari.setPointDirection((int)(ishikari.getPointDirection()-8));
   }
   if(right == true)
   {
-    ishikari.setPointDirection((int)(ishikari.getPointDirection()+7));
+    ishikari.setPointDirection((int)(ishikari.getPointDirection()+8));
   }
   if(h == true && flash == 0 && jumpFuel >= 1)
   {
@@ -652,20 +686,20 @@ public void keyResponse()
     else if(gunMode=="AUTOCANNON" && energy > 20)
     {
       shots.add(new Shot(0));
-      reload = reload + 5;
+      reload = reload + 4;
       energy = energy - 10;
     }
     else if(gunMode=="GATLING" && energy > 30)
     {
       shots.add(new Shot((int)(Math.random()*16-8)));
-      reload = reload + 3;
-      energy = energy - 15;
+      reload = reload + 2;
+      energy = energy - 10;
     }
     else if(gunMode=="MULTIGUN" && energy > 400)
     {
-      for(int i = 0; i < 360; i = i  = 10){shots.add(new Shot(i));}
-      reload = reload + 160;
-      energy = energy - 400;
+      for(int i = 0; i < 360; i = i + 10){shots.add(new Shot(i));}
+      reload = reload + 60;
+      energy = energy - 250;
     }
   }
 }
@@ -688,7 +722,7 @@ public void reset()
   {
     drifters.remove(0);
   }
-  for(int i = 0; i < 10; i++)
+  for(int i = 0; i < 40; i++)
   {
     drifters.add(new Asteroid());
   }
@@ -704,7 +738,7 @@ public void reset()
   reload = 0;
   score = 0;
   energy = 1000;
-  spawnSize = 20;
+  spawnSize = 40;
 }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "AsteroidsGame" };
