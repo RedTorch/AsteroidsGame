@@ -35,6 +35,7 @@ int spawnSize = 40;
 int score = 0;
 int gameOverTime = 0;
 boolean alertBlink = true;
+int alertPulse = 0;
 int gunToggle = 0;
 String gunMode = "AUTOCANNON"; //Options: "AUTOCANNON", "SPREADGUN", "GATLING", "MULTIGUN"
 private SpaceShip ishikari = new SpaceShip();
@@ -99,6 +100,7 @@ public void draw()
           space = false;
           gameOverTime = 60;
           alertBlink = false;
+          alertPulse = 0;
         }
       }
     }
@@ -199,20 +201,26 @@ public void draw()
     text("<F> KEY TO CYCLE THROUGH FIRING MODES",(int)(width/2),(int)(height/2)+50);
     if(gameOverTime<=0)
     {
-      if(gameOverTime%15==0)
+      fill(200,50,50,alertPulse);
+      textSize(35);
+      text("-PRESS SPACE TO RE-LAUNCH-",(int)(width/2),(int)(height/3*2));
+      keyResponse();
+      if(alertPulse<=0)
       {
-        alertBlink = !alertBlink;
+        alertBlink = true;
       }
-      //fill(50,12,12);
-      //textSize(35);
-      //text("-PRESS SPACE TO RE-LAUNCH-",(int)(width/2),(int)(height/3*2));
+      else if(alertPulse>=255)
+      {
+        alertBlink = false;
+      }
       if(alertBlink == true)
       {
-        fill(200,50,50);
-        textSize(35);
-        text("-PRESS SPACE TO RE-LAUNCH-",(int)(width/2),(int)(height/3*2));
+        alertPulse = alertPulse + 15;
       }
-      keyResponse();
+      else if(alertBlink == false)
+      {
+        alertPulse = alertPulse - 15;
+      }
     }
   }
 }
@@ -555,6 +563,8 @@ class star
   {
     stroke(255);
     ellipse(myX,myY,3,3);
+    myY+=5;
+    if(myY>height){myY = 0;}
   }
 }
 public void keyPressed()
@@ -657,7 +667,7 @@ public void keyResponse()
   }
   else if(space == true && gameOver == false && reload == 0)
   {
-    if(gunMode=="SPREADGUN" && energy > 100)
+    if(gunMode=="SPREADGUN" && energy > 25)
     {
       shots.add(new Shot(9));
       shots.add(new Shot(6));
@@ -669,22 +679,22 @@ public void keyResponse()
       reload = reload + 5;
       energy = energy - 25;
     }
-    else if(gunMode=="AUTOCANNON" && energy > 20)
+    else if(gunMode=="AUTOCANNON" && energy > 10)
     {
       shots.add(new Shot(0));
       reload = reload + 4;
       energy = energy - 10;
     }
-    else if(gunMode=="GATLING" && energy > 30)
+    else if(gunMode=="GATLING" && energy > 6)
     {
       shots.add(new Shot((int)(Math.random()*16-8)));
       reload = reload + 2;
       energy = energy - 6;
     }
-    else if(gunMode=="MULTIGUN" && energy > 400)
+    else if(gunMode=="MULTIGUN" && energy > 250)
     {
       for(int i = 0; i < 360; i = i + 5){shots.add(new Shot(i));}
-      reload = reload + 60;
+      reload = reload + 30;
       energy = energy - 250;
     }
   }
