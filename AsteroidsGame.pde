@@ -639,7 +639,7 @@ void keyResponse()
   }
   else if(space == true && gameOver == false && reload == 0)
   {
-    if(gunMode=="SPREADGUN" && energy > 100)
+    if(gunMode=="SPREADGUN" && energy > 25)
     {
       shots.add(new Shot(9));
       shots.add(new Shot(6));
@@ -651,21 +651,21 @@ void keyResponse()
       reload = reload + 5;
       energy = energy - 25;
     }
-    else if(gunMode=="AUTOCANNON" && energy > 20)
+    else if(gunMode=="AUTOCANNON" && energy > 10)
     {
       shots.add(new Shot(0));
       reload = reload + 4;
       energy = energy - 10;
     }
-    else if(gunMode=="GATLING" && energy > 30)
+    else if(gunMode=="GATLING" && energy > 6)
     {
       shots.add(new Shot((int)(Math.random()*16-8)));
       reload = reload + 2;
-      energy = energy - 10;
+      energy = energy - 6;
     }
-    else if(gunMode=="MULTIGUN" && energy > 400)
+    else if(gunMode=="MULTIGUN" && energy > 250)
     {
-      for(int i = 0; i < 360; i = i + 10){shots.add(new Shot(i));}
+      for(int i = 0; i < 360; i = i + 5){shots.add(new Shot(i));}
       reload = reload + 60;
       energy = energy - 250;
     }

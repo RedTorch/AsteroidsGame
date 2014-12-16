@@ -61,20 +61,6 @@ public void draw()
 {
   if(gameOver == false)
   {
-    for(int i = 0; i < drifters.size(); i++)
-    {
-      int x = ishikari.getX();
-      int y = ishikari.getY();
-      while(x > 0 && x < width && y > 0 && y <height)
-      {
-        if(dist(x,y,drifters.get(i).getX,drifters.get(i).getY)<30)
-        {
-          space = true;
-        }
-        x = x + (int)(Math.cos(ishikari.getPointDirection())*3);
-        y = y + (int)(Math.sin(ishikari.getPointDirection())*3);
-      }
-    }
     if(reload>0){reload--;}
     if(energy<1000){energy = energy + 1;}
     noFill();
@@ -693,11 +679,11 @@ public void keyResponse()
     {
       shots.add(new Shot((int)(Math.random()*16-8)));
       reload = reload + 2;
-      energy = energy - 10;
+      energy = energy - 6;
     }
     else if(gunMode=="MULTIGUN" && energy > 400)
     {
-      for(int i = 0; i < 360; i = i + 10){shots.add(new Shot(i));}
+      for(int i = 0; i < 360; i = i + 5){shots.add(new Shot(i));}
       reload = reload + 60;
       energy = energy - 250;
     }
