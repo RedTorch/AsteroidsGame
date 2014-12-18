@@ -115,7 +115,8 @@ public void draw()
       {
         if(dist(drifters.get(i).getX(),drifters.get(i).getY(),shots.get(o).getX(),shots.get(o).getY())<15)
         {
-          drifters.get(i).flipExist();
+          //drifters.get(i).flipExist();
+          drifters.get(i).takeDam();
           shots.get(o).flipExist();
         }
       }
@@ -139,7 +140,7 @@ public void draw()
             drifters.add(new Asteroid());
           }
           spawnSize = spawnSize + 40;
-          energy = 1000;
+          energy = 2000;
         }
       }
     }
@@ -271,6 +272,7 @@ class SpaceShip extends Floater
 class Asteroid extends Floater
 {
   private int randDir;
+  private int myLife;
   Asteroid()
   {
       myColor = color(200,100,50);
@@ -327,6 +329,7 @@ class Asteroid extends Floater
       accelerate((int)(Math.random()*2)+2.5f);
       wraps = true;
       exist = true;
+      myLife = 5;
   }
   public void setX(int x) {myCenterX = x;}
   public void setY(int y) {myCenterY = y;}
@@ -369,6 +372,18 @@ class Asteroid extends Floater
       {
         exist = false;
       }
+    }
+  }
+  public void takeDam()
+  {
+    myLife--;
+    for(int randy = 0; randy < 5; randy++)
+    {
+      exhaust.add(new Particle(color(200,100,50),(int)(myCenterX),(int)(myCenterY),(int)(Math.random()*360)));
+    }
+    if(myLife==0)
+    {
+      flipExist();
     }
   }
 }
@@ -563,8 +578,10 @@ class star
   {
     stroke(255);
     ellipse(myX,myY,3,3);
-    myY+=5;
-    if(myY>height){myY = 0;}
+    if(myX > width){myX = 0;}
+    else if(myX < 0){myX = width;}
+    if(myY > height){myY = 0;}
+    else if(myY < 0){myY = height;}
   }
 }
 public void keyPressed()
@@ -677,25 +694,25 @@ public void keyResponse()
       shots.add(new Shot(-6));
       shots.add(new Shot(-9));
       reload = reload + 5;
-      energy = energy - 25;
+      energy = energy - 12;
     }
     else if(gunMode=="AUTOCANNON" && energy > 10)
     {
       shots.add(new Shot(0));
       reload = reload + 4;
-      energy = energy - 10;
+      energy = energy - 5;
     }
     else if(gunMode=="GATLING" && energy > 6)
     {
       shots.add(new Shot((int)(Math.random()*16-8)));
       reload = reload + 2;
-      energy = energy - 6;
+      energy = energy - 3;
     }
     else if(gunMode=="MULTIGUN" && energy > 250)
     {
       for(int i = 0; i < 360; i = i + 5){shots.add(new Shot(i));}
       reload = reload + 30;
-      energy = energy - 250;
+      energy = energy - 100;
     }
   }
 }
@@ -733,7 +750,7 @@ public void reset()
   }
   reload = 0;
   score = 0;
-  energy = 1000;
+  energy = 2000;
   spawnSize = 40;
 }
   static public void main(String[] passedArgs) {
