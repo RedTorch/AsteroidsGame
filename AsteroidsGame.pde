@@ -5,7 +5,7 @@ int height = 800;
 int flash = 255;
 int jumpFuel = 10;
 int reload = 0;
-int energy = 1000;
+int energy = 2000;
 boolean up = false;
 boolean left = false;
 boolean right = false;
@@ -18,13 +18,14 @@ int score = 0;
 int gameOverTime = 0;
 boolean alertBlink = true;
 int alertPulse = 0;
-int gunToggle = 0;
+int gunToggle = 1;
 String gunMode = "AUTOCANNON"; //Options: "AUTOCANNON", "SPREADGUN", "GATLING", "MULTIGUN"
 private SpaceShip ishikari = new SpaceShip();
 star[] skyFullOfStars = new star[100];
 ArrayList <Asteroid> drifters;
 ArrayList <Particle> exhaust;
 ArrayList <Shot> shots;
+int level = 0;
 public void setup() 
 {
   size(width,height+50);
@@ -117,10 +118,12 @@ public void draw()
         }
         if(drifters.size()==0)
         {
-          for(int yo = 0; yo < spawnSize; yo++)
+          //for(int yo = 0; yo < spawnSize; yo++)
+          for(int yo = 0; yo < 20; yo++)
           {
             drifters.add(new Asteroid());
           }
+          level++;
           spawnSize = spawnSize + 40;
           energy = 2000;
         }
@@ -175,7 +178,7 @@ public void draw()
     fill(200,50,50);
     background(0);
     textSize(32);
-    text("R.I.P. DE-ISHIKARI. SCORE <" + score + ">",(int)(width/2),(int)(height/3));
+    text("GAME OVER. LEVEL <" + (level+1) + ">. SCORE <" + score + ">",(int)(width/2),(int)(height/3));
     textSize(20);
     text("CONTROLS:",(int)(width/2),(int)(height/2)-50);
     text("ARROW KEYS TO TURN AND ACCELERATE",(int)(width/2),(int)(height/2)-25);
@@ -311,7 +314,7 @@ class Asteroid extends Floater
       accelerate((int)(Math.random()*2)+2.5);
       wraps = true;
       exist = true;
-      myLife = 5;
+      myLife = 8+(level*4);
   }
   public void setX(int x) {myCenterX = x;}
   public void setY(int y) {myCenterY = y;}
@@ -680,20 +683,25 @@ void keyResponse()
     }
     else if(gunMode=="AUTOCANNON" && energy > 10)
     {
+      shots.add(new Shot(-2));
+      shots.add(new Shot(-1));
       shots.add(new Shot(0));
+      shots.add(new Shot(1));
+      shots.add(new Shot(2));
       reload = reload + 4;
       energy = energy - 5;
     }
     else if(gunMode=="GATLING" && energy > 6)
     {
       shots.add(new Shot((int)(Math.random()*16-8)));
+      shots.add(new Shot((int)(Math.random()*16-8)));
       reload = reload + 2;
       energy = energy - 3;
     }
     else if(gunMode=="MULTIGUN" && energy > 250)
     {
-      for(int i = 0; i < 360; i = i + 5){shots.add(new Shot(i));}
-      reload = reload + 30;
+      for(int i = 0; i < 360; i = i + 2){shots.add(new Shot(i));}
+      reload = reload + 120;
       energy = energy - 100;
     }
   }
@@ -717,7 +725,8 @@ void reset()
   {
     drifters.remove(0);
   }
-  for(int i = 0; i < 40; i++)
+  //for(int i = 0; i < spawnSize; i++)
+  for(int i = 0; i < 20; i++)
   {
     drifters.add(new Asteroid());
   }
@@ -734,4 +743,5 @@ void reset()
   score = 0;
   energy = 2000;
   spawnSize = 40;
+  level = 0;
 }
