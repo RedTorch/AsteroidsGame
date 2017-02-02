@@ -22,9 +22,9 @@ Suggested steps to complete this assignment
 
 These steps are only a suggestion. Your Asteroids game doesn't have to work or act like any other. Have fun and be creative.
 
-=========================================================
-=FLIGHT INSTRUCTIONS FOR DE-ISHIKAWA LIGHT SPACE FRIGATE=
-=========================================================
+========
+CONTROLS
+========
 
 <ACCELERATION>
 press UP arrow key to accelerate
